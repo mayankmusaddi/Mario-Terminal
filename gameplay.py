@@ -22,11 +22,7 @@ class GamePlay:
 					mario.moveLeft()
 
 			elif choice is 'd':
-				if mario.x < (0.5*background.width)-mario.width:
-					mario.moveRight()
-				else:
-					background.moveForward()
-					mario.motion()
+				mario.moveRight(background)
 
 			elif choice is 'w':
 				mario.jumpTime = time.time()

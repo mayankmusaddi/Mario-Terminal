@@ -2,7 +2,7 @@ import time
 from action import *
 
 floorPos = 18
-g=-14
+g= -14
 
 class Element:
 	def __init__(self,x,y,*designs):
@@ -21,7 +21,7 @@ class Character(Element):
 		self.posture=0
 		self.dn=1
 		self.velocity=0
-		self.jumpTime=0
+		self.jumpTime=time.time()
 		super(Character,self).__init__(x,y,*designs)
 
 	def motion(self):
@@ -30,9 +30,12 @@ class Character(Element):
 			self.dn*=-1
 		self.design=self.designArr[self.posture]
 
-	def moveRight(self):
+	def moveRight(self,background):
 		self.motion()
-		self.x+=1
+		if self.x < (0.5*background.width)-self.width:
+			self.x+=1
+		else:
+			background.moveForward()
 
 	def moveLeft(self):
 		self.motion()
@@ -45,18 +48,20 @@ class Character(Element):
 		self.y+=1
 
 	def gravity(self,game):
-		t = time.time()-self.jumpTime
 
+		t = time.time()-self.jumpTime
 		self.y -= t*(self.velocity + (0.5 * g * t)) 
 		self.velocity += g*t
 		self.jumpTime=time.time()
-		# if (self.y+self.height) >= floorPos:
-			# self.velocity=0
-			# self.y = floorPos - self.height
+		if self.y < 0:
+			self.y=0
 
-		if game[round(self.y+self.height)][self.x+round(self.width/2)] is 'T':
-			self.velocity=0
-			self.y = floorPos - self.height
+		ey = int(round(min((self.y+self.height),floorPos+1)))
+
+		if self.velocity < 0 and 'T' in game[ ey ][ int(self.x) : int(self.x+self.width) ]:
+			self.velocity = 0
+			self.y = ey-self.height
+
 
 class Background(Element):
 	def __init__(self,x,y,*designs):
