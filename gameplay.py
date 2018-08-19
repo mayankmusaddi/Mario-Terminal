@@ -1,35 +1,42 @@
 import os,time
-from action import *
 from characters import *
 from getch import *
 
 class GamePlay:
 
 	def main():
-		background = Background(0,0,"background.txt")
-		mario = Character(3,35,13,"mario1.txt","mario2.txt","mario3.txt")
+		os.system("clear")
+		print("Enter level : ",end='')
+		levelname = input()
+		level = Level(0,0,levelname+".txt")
+		mario = Character(3,2,10,"mario1.txt","mario2.txt","mario3.txt")
+		mario.cannotCross=['T','|','/','\\','`']
+
 		while True:
 			os.system("clear")
 
-			game = Action.place(background.design,mario.design,mario.x,round(mario.y))
-			Action.printGame(game)
-
-			mario.gravity(game)
+			level.printOnTop(mario)
+			mario.gravity(level)
 			choice = getch()
 
 			if choice is 'a':
-				if mario.x > 0:
-					mario.moveLeft()
+				if mario.x > level.pos:
+					mario.moveLeft(level)
 
 			elif choice is 'd':
-				mario.moveRight(background)
+				if mario.x < level.pos+(40)-mario.width:
+					mario.moveRight(level)
+				else:
+					if mario.moveRight(level):
+						level.pos+=1
 
 			elif choice is 'w':
 				mario.jumpTime = time.time()
 				if mario.velocity is 0:
-					mario.velocity = 14
+					mario.velocity = 16
 
 			elif choice is 'x':
 				break
+		print(mario.coins)
 
 	main()

@@ -11,7 +11,7 @@ class Action:
 	@staticmethod
 	def printGame(arr):
 		for line in arr:
-			print(line)
+			print(line[:80])
 
 	@staticmethod
 	def place(arr,toPlace,x,y):
