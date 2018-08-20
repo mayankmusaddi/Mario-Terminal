@@ -9,14 +9,31 @@ class GamePlay:
 		print("Enter level : ",end='')
 		levelname = input()
 		level = Level(0,0,levelname+".txt")
+
 		mario = Character(3,2,10,"mario1.txt","mario2.txt","mario3.txt")
 		mario.cannotCross=['T','|','/','\\','`']
+
+		file = open(levelname+"Enemy.txt","r")
+		enemies=[]
+		for line in file:
+			goomba = eval(line)
+			goomba.cannotCross=['T','|','/','\\','`']
+			enemies.append(goomba)
 
 		while True:
 			os.system("clear")
 
-			level.printOnTop(mario)
 			mario.gravity(level)
+
+			for enemy in enemies:
+				enemy.gravity(level)
+
+			level.printOnTop(mario,*enemies)
+
+			if mario.life is 0:
+				print("GAME OVER")
+				break
+
 			choice = getch()
 
 			if choice is 'a':

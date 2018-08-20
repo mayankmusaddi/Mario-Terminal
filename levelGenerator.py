@@ -17,49 +17,54 @@ class LevelGenerator:
 
 		level = Level(0,0,filename+".txt")
 
+		enemies = []
+		enemiesstr = []
+
 		while True:
 			os.system("clear")
-			level.print()
+			level.printOnTop(*enemies)
 
 			choice = input()
 			if choice is 'b':
-				obj = Character(0,0,0,"brick.txt")
+				obj = Character(0,level.pos,0,"brick.txt")
 				obj.cannotCross=['T','/','\\','`','-']
 			elif choice is 'c':
-				obj = Character(0,0,0,"coin.txt")
+				obj = Character(0,level.pos,0,"coin.txt")
 				obj.cannotCross=['T','|','/','\\','`','-']
 			elif choice is 's':
-				obj = Character(0,0,0,"spring.txt")
+				obj = Character(0,level.pos,0,"spring.txt")
 				obj.cannotCross=['|','/','\\','`','-']
 			elif choice is 't':
-				obj = Character(0,0,0,"tunnel.txt")
+				obj = Character(0,level.pos,0,"tunnel.txt")
 				obj.cannotCross=['T','|','/','\\','`','-']
 			elif choice is 'p':
-				obj = Character(0,0,0,"pit.txt")
+				obj = Character(0,level.pos,0,"pit.txt")
 				obj.cannotCross=['/','\\','`','-']
 			elif choice is 'm':
-				obj = Character(0,0,0,"coinbrick.txt")
+				obj = Character(0,level.pos,0,"coinbrick.txt")
 				obj.cannotCross=['T','/','\\','`','-']
+			elif choice is 'g':
+				obj = Character(1,level.pos,0,"goomba1.txt","goomba2.txt")
+				obj.cannotCross=['T','|','/','\\','`']
 			else:
 				break
 
-			pos=0
 			while True:
 				os.system("clear")
 
-				level.printOnTop(obj,pos)
+				level.printOnTop(obj,*enemies)
 				move = getch()
 
 				if move is 'a':
-					if obj.x > pos:
+					if obj.x > level.pos:
 						obj.moveLeft(level)
 	
 				elif move is 'd':
-					if obj.x < pos+(40)-obj.width:
+					if obj.x < level.pos+(40)-obj.width:
 						obj.moveRight(level)
 					else:
 						if obj.moveRight(level):
-							pos+=1
+							level.pos+=1
 	
 				elif move is 'w':
 					if obj.y>0:
@@ -70,7 +75,12 @@ class LevelGenerator:
 						obj.moveDown(level)
 
 				elif move is 'x':
-					level.place(obj)
+					if choice is 'g':
+						enemies.append(obj)
+						enemystr = "Character(1,"+str(obj.x)+","+str(obj.y)+",\"goomba1.txt\",\"goomba2.txt\")"
+						enemiesstr.append(enemystr)
+					else:
+						level.place(obj)
 					break
 
 		if ch is not '1':
@@ -79,7 +89,14 @@ class LevelGenerator:
 
 		open(filename+".txt", "w").close()
 		file = open(filename+".txt","a")
+
+		open(filename+"Enemy.txt", "w").close()
+		enemyfile = open(filename+"Enemy.txt","a")
+
 		for line in level.design:
 			file.write(line+"\n")
+
+		for line in enemiesstr:
+			enemyfile.write(line+"\n")
 
 	main()

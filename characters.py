@@ -1,7 +1,7 @@
 import time
 from action import *
 
-floorPos = 22
+floorPos = 23	
 g= -14
 
 class Element:
@@ -138,11 +138,18 @@ class Level(Element):
 			cy+=1
 		self.design=arrP
 
-	def printOnTop(self,top):
-		cy=0
-		for line in self.design:
-			if cy >= round(top.y) and cy < round(top.y)+len(top.design):
-				print((line[:top.x]+top.design[cy-round(top.y)]+line[top.x+len(top.design[cy-round(top.y)]) : ])[self.pos:self.pos+80])
-			else:
-				print(line[self.pos:self.pos+80])
-			cy+=1
+	def printOnTop(self,*characters):
+		temp = self.design
+		for toPlace in characters:
+			arrP=[]
+			cy=0
+			for line in temp:
+				if ( cy >= round(toPlace.y) and cy< round(toPlace.y)+len(toPlace.design)):
+					l = line[ : toPlace.x ] + toPlace.design[ cy-round(toPlace.y) ] + line[ (toPlace.x+len(toPlace.design[ cy-round(toPlace.y) ])) :]
+				else:
+					l = line
+				arrP.append(l)
+				cy+=1
+			temp = arrP
+		for line in temp:
+			print(line[self.pos: self.pos+80])
