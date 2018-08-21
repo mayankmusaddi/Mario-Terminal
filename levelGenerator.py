@@ -11,14 +11,31 @@ class LevelGenerator:
 		print("2. Start from Scratch")
 		ch = input()
 		filename = "level"
-		if ch is '1': 
-			print("Enter Level Name : ",end='')
-			filename = input()
+		if ch is '1':
+			while True: 
+				try:
+					print("Enter Level Name : ",end='')
+					filename = input()
+					level = Level(0,0,"./levels/"+filename+".txt")
+					break
+				except FileNotFoundError:
+					print("Level Does not exist! Try again")
+		else:
+			level = Level(0,0,"./levels/"+filename+".txt")
 
-		level = Level(0,0,filename+".txt")
+
 
 		enemies = []
 		enemiesstr = []
+
+		try:
+			file = open("./levels/"+filename+"Enemy.txt","r")
+			for line in file:
+				goomba = eval(line)
+				goomba.cannotCross=['T','|','/','\\','`']
+				enemies.append(goomba)
+		except:
+			pass
 
 		while True:
 			os.system("clear")
@@ -26,25 +43,25 @@ class LevelGenerator:
 
 			choice = input()
 			if choice is 'b':
-				obj = Character(0,level.pos,0,"brick.txt")
+				obj = Character(0,level.pos,0,"./designs/brick.txt")
 				obj.cannotCross=['T','/','\\','`','-']
 			elif choice is 'c':
-				obj = Character(0,level.pos,0,"coin.txt")
+				obj = Character(0,level.pos,0,"./designs/coin.txt")
 				obj.cannotCross=['T','|','/','\\','`','-']
 			elif choice is 's':
-				obj = Character(0,level.pos,0,"spring.txt")
+				obj = Character(0,level.pos,0,"./designs/spring.txt")
 				obj.cannotCross=['|','/','\\','`','-']
 			elif choice is 't':
-				obj = Character(0,level.pos,0,"tunnel.txt")
+				obj = Character(0,level.pos,0,"./designs/tunnel.txt")
 				obj.cannotCross=['T','|','/','\\','`','-']
 			elif choice is 'p':
-				obj = Character(0,level.pos,0,"pit.txt")
+				obj = Character(0,level.pos,0,"./designs/pit.txt")
 				obj.cannotCross=['/','\\','`','-']
 			elif choice is 'm':
-				obj = Character(0,level.pos,0,"coinbrick.txt")
+				obj = Character(0,level.pos,0,"./designs/coinbrick.txt")
 				obj.cannotCross=['T','/','\\','`','-']
 			elif choice is 'g':
-				obj = Character(1,level.pos,0,"goomba1.txt","goomba2.txt")
+				obj = Character(1,level.pos,0,"./designs/goomba1.txt","./designs/goomba2.txt")
 				obj.cannotCross=['T','|','/','\\','`']
 			else:
 				break
@@ -77,7 +94,7 @@ class LevelGenerator:
 				elif move is 'x':
 					if choice is 'g':
 						enemies.append(obj)
-						enemystr = "Character(1,"+str(obj.x)+","+str(obj.y)+",\"goomba1.txt\",\"goomba2.txt\")"
+						enemystr = "Character(1,"+str(obj.x)+","+str(obj.y)+",\"./designs/goomba1.txt\",\"./designs/goomba2.txt\")"
 						enemiesstr.append(enemystr)
 					else:
 						level.place(obj)
@@ -87,11 +104,11 @@ class LevelGenerator:
 			print("Enter Level Name : ",end='')
 			filename = input()
 
-		open(filename+".txt", "w").close()
-		file = open(filename+".txt","a")
+		open("./levels/"+filename+".txt", "w").close()
+		file = open("./levels/"+filename+".txt","a")
 
-		open(filename+"Enemy.txt", "w").close()
-		enemyfile = open(filename+"Enemy.txt","a")
+		open("./levels/"+filename+"Enemy.txt", "w").close()
+		enemyfile = open("./levels/"+filename+"Enemy.txt","a")
 
 		for line in level.design:
 			file.write(line+"\n")

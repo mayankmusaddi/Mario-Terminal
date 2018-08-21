@@ -1,2 +1,0 @@
-Character(1,58,6,"goomba1.txt","goomba2.txt")
-Character(1,94,12,"goomba1.txt","goomba2.txt")

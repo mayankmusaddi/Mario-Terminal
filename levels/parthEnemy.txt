@@ -1,0 +1,3 @@
+Character(1,47,6,"./designs/goomba1.txt","./designs/goomba2.txt")
+Character(1,71,9,"./designs/goomba1.txt","./designs/goomba2.txt")
+Character(1,17,0,"./designs/goomba1.txt","./designs/goomba2.txt")

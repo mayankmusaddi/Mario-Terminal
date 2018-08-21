@@ -22,8 +22,12 @@ class Character(Element):
 		self.dn=1
 		self.velocity=0
 		self.jumpTime=time.time()
+		self.spawnTime = time.time()
 		self.cannotCross=[]
 		self.coins=0
+		self.kills=0
+		self.direction = -1
+		self.slow = 0.5
 		super(Character,self).__init__(x,y,*designs)
 
 	def motion(self):
@@ -33,6 +37,16 @@ class Character(Element):
 		if len(self.designArr) is 1:
 			self.posture = 0
 		self.design=self.designArr[self.posture]
+
+	def move(self,structure):
+		if time.time()-self.spawnTime > self.slow:
+			if self.direction == -1:
+				if not self.moveLeft(structure):
+					self.direction = 1
+			else:
+				if not self.moveRight(structure):
+					self.direction = -1
+			self.spawnTime = time.time()
 
 	def moveRight(self,structure):
 		self.motion()
@@ -73,7 +87,7 @@ class Character(Element):
 			for character in line[self.x:self.x+self.width]:
 				if character is '0' or character is '?':
 					self.coins+=1
-					space = Element(cx,cy,"empty.txt")
+					space = Element(cx,cy,"./designs/empty.txt")
 					structure.place(space)
 				cx+=1
 
@@ -87,13 +101,17 @@ class Character(Element):
 			cy+=1
 		return True
 
+	def spawn(self,structure):
+		self.x=structure.pos+2
+		self.y=0
+		self.velocity=0
+
 	def gravity(self,structure):
 
 		if self.y >= floorPos :
 			self.life -=1
-			self.x=structure.pos+2
-			self.y=10
-			self.velocity=0
+			if self.life > 0:
+				self.spawn(structure)
 
 		t = time.time()-self.jumpTime
 		by = self.y
