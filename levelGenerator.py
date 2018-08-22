@@ -21,7 +21,7 @@ class LevelGenerator:
 				except FileNotFoundError:
 					print("Level Does not exist! Try again")
 		else:
-			level = Level(0,0,"./levels/"+filename+".txt")
+			level = Level(0,0,"./designs/"+filename+".txt")
 
 
 
@@ -91,6 +91,9 @@ class LevelGenerator:
 					if obj.y < 23-obj.height:
 						obj.moveDown(level)
 
+				elif move is 'e':
+					break
+					
 				elif move is 'x':
 					if choice is 'g':
 						enemies.append(obj)

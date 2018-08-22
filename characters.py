@@ -9,11 +9,16 @@ class Element:
 		self.x = x
 		self.y = y
 		self.designArr=[]
-		for file in designs:
-			self.designArr.append(Write.toArray(file))
-		self.design=self.designArr[0]
-		self.height = len(self.design)
-		self.width = len(self.design[0])
+		self.design=[]
+		self.height=0
+		self.width=0
+		if len(designs) > 0:
+			print(designs)
+			for file in designs:
+				self.designArr.append(Write.toArray(file))
+			self.design=self.designArr[0]
+			self.height = len(self.design)
+			self.width = len(self.design[0])
 
 class Character(Element):
 	def __init__(self,life,x,y,*designs):
@@ -126,6 +131,22 @@ class Character(Element):
 			self.velocity = 0
 			return False
 		return True
+
+	def kill(self,enemy,structure):
+		if (round(self.y)+self.height-1 == round(enemy.y)) and self.x+self.width > enemy.x and enemy.x+enemy.width > self.x:
+			enemy.life-=1
+		elif self.y+self.height > enemy.y and enemy.y+enemy.height > self.y and self.x+self.width > enemy.x and enemy.x+enemy.width > self.x :
+			self.life-=1
+			self.spawn(structure)
+
+class Missile(Character):
+	def __init__(self,life,x,y,*designs):
+		super(Missile,self).__init__(life,x,y,*designs)
+
+	def attack(self,enemy):
+		if self.x+self.width == enemy.x and self.y+self.height > enemy.y and enemy.y+enemy.height > self.y:
+			enemy.life-=1
+			self.life-=1
 
 class Level(Element):
 

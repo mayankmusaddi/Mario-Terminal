@@ -14,11 +14,16 @@ class GamePlay:
 			except FileNotFoundError:
 				print("Level does not Exist!\nCreate your level by command 'python3 levelGenerator.py'")
 
-
 		mario = Character(3,2,10,"./designs/mario1.txt","./designs/mario2.txt","./designs/mario3.txt")
 		mario.cannotCross=['T','|','/','\\','`']
-
+		lives = Element(3,0)
+		coins = Element(26,0)
+		kills = Element(49,0)
+		score = Element(72,0)
+		boss = Character(5,277,10,"./designs/boss.txt")
+		boss.cannotCross=['T','|','/','\\','`']
 		enemies=[]
+		missiles=[]
 		try:
 			file = open("./levels/"+levelname+"Enemy.txt","r")
 			for line in file:
@@ -29,29 +34,48 @@ class GamePlay:
 			pass
 
 		while True:
-			os.system("clear")
+
+			if mario.x == 321:
+				mario.cannotCross=['T']
+				winTime = time.time()
+			if mario.x == 379:
+				break
 
 			mario.gravity(level)
+			boss.gravity(level)
 			index=0
 			for enemy in enemies:
 				enemy.gravity(level)
-				
-				if (round(mario.y)+mario.height-1 == round(enemy.y)) and mario.x+mario.width > enemy.x and enemy.x+enemy.width > mario.x:
-					enemy.life-=1
-					if enemy.life == 0:
-						del(enemies[index])
-						mario.kills +=1
-				elif mario.y+mario.height > enemy.y and enemy.y+enemy.height > mario.y and mario.x+mario.width > enemy.x and enemy.x+enemy.width > mario.x :
-					mario.life-=1
-					mario.spawn(level)
+				enemy.move(level)
+				mario.kill(enemy,level)
+
+				for missile in missiles:
+						missile.attack(enemy)
+
+				if enemy.life <= 0:
+					del(enemies[index])
+					mario.kills+=1
 				index+=1
 
-				enemy.move(level)
+			index=0
+			for missile in missiles:
+				if not missile.moveRight(level) or missile.life <=0 or missile.x > level.pos+80:
+					del(missiles[index])
+				index+=1
 
+			lives.design = ["LIVES",str(mario.life)]
+			coins.design = ["COINS",str(mario.coins)]
+			kills.design = ["KILLS",str(mario.kills)]
+			score.design = ["SCORE",str(mario.kills*50+mario.coins*10+level.pos)]
+			lives.x=level.pos+3
+			coins.x=lives.x+23
+			kills.x=coins.x+23
+			score.x=kills.x+23
+			
+			os.system("clear")
+			level.printOnTop(mario,boss,*enemies,*missiles,lives,coins,kills,score)
 
-			level.printOnTop(mario,*enemies)
-
-			if mario.life is 0:
+			if mario.life is 0:	
 				print("GAME OVER")
 				break
 
@@ -73,9 +97,17 @@ class GamePlay:
 				if mario.velocity is 0:
 					mario.velocity = 16
 
+			elif choice is 'f':
+				missile= Missile(1,mario.x+5,mario.y+2	,"./designs/missile.txt")
+				missile.cannotCross=['T','|','/','\\','`']
+				missiles.append(missile)
+
+			elif choice is 'h':
+				level.pos+=5
+				mario.spawn(level)
+
 			elif choice is 'q':
 				break
-		print(mario.coins)
 
 	os.system("clear")
 	main()
