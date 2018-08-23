@@ -1,8 +1,8 @@
-import time
+import time,random,os
 from action import *
 
 floorPos = 23	
-g= -14
+g= -20
 
 class Element:
 	def __init__(self,x,y,*designs):
@@ -13,7 +13,6 @@ class Element:
 		self.height=0
 		self.width=0
 		if len(designs) > 0:
-			print(designs)
 			for file in designs:
 				self.designArr.append(Write.toArray(file))
 			self.design=self.designArr[0]
@@ -29,10 +28,6 @@ class Character(Element):
 		self.jumpTime=time.time()
 		self.spawnTime = time.time()
 		self.cannotCross=[]
-		self.coins=0
-		self.kills=0
-		self.direction = -1
-		self.slow = 0.5
 		super(Character,self).__init__(x,y,*designs)
 
 	def motion(self):
@@ -42,16 +37,6 @@ class Character(Element):
 		if len(self.designArr) is 1:
 			self.posture = 0
 		self.design=self.designArr[self.posture]
-
-	def move(self,structure):
-		if time.time()-self.spawnTime > self.slow:
-			if self.direction == -1:
-				if not self.moveLeft(structure):
-					self.direction = 1
-			else:
-				if not self.moveRight(structure):
-					self.direction = -1
-			self.spawnTime = time.time()
 
 	def moveRight(self,structure):
 		self.motion()
@@ -88,14 +73,6 @@ class Character(Element):
 		cy=round(self.y)
 		for line in structure.design[ round(self.y) : round(self.y+self.height) ] :
 
-			cx=self.x
-			for character in line[self.x:self.x+self.width]:
-				if character is '0' or character is '?':
-					self.coins+=1
-					space = Element(cx,cy,"./designs/empty.txt")
-					structure.place(space)
-				cx+=1
-
 			if '-' in line[self.x:self.x+self.width]:
 				self.velocity=23
 				return True
@@ -105,11 +82,6 @@ class Character(Element):
 					return False
 			cy+=1
 		return True
-
-	def spawn(self,structure):
-		self.x=structure.pos+2
-		self.y=0
-		self.velocity=0
 
 	def gravity(self,structure):
 
@@ -132,13 +104,6 @@ class Character(Element):
 			return False
 		return True
 
-	def kill(self,enemy,structure):
-		if (round(self.y)+self.height-1 == round(enemy.y)) and self.x+self.width > enemy.x and enemy.x+enemy.width > self.x:
-			enemy.life-=1
-		elif self.y+self.height > enemy.y and enemy.y+enemy.height > self.y and self.x+self.width > enemy.x and enemy.x+enemy.width > self.x :
-			self.life-=1
-			self.spawn(structure)
-
 class Missile(Character):
 	def __init__(self,life,x,y,*designs):
 		super(Missile,self).__init__(life,x,y,*designs)
@@ -147,6 +112,101 @@ class Missile(Character):
 		if self.x+self.width == enemy.x and self.y+self.height > enemy.y and enemy.y+enemy.height > self.y:
 			enemy.life-=1
 			self.life-=1
+
+class Fire(Character):
+	def __init__(self,life,x,y,*designs):
+		super(Fire,self).__init__(life,x,y,*designs)
+
+	def attack(self,enemy):
+		if self.x == enemy.x and self.y+self.height > enemy.y and enemy.y+enemy.height > self.y:
+			enemy.life-=1
+			self.life-=1
+
+class Goomba(Character):
+	def __init__(self,life,x,y,*designs):
+		self.direction = -1
+		self.slow = 0.5
+		super(Goomba,self).__init__(life,x,y,*designs)
+
+	def move(self,structure):
+		if time.time()-self.spawnTime > self.slow:
+			if self.direction == -1:
+				if not self.moveLeft(structure):
+					self.direction = 1
+			else:
+				if not self.moveRight(structure):
+					self.direction = -1
+			self.spawnTime = time.time()
+
+class Boss(Character):
+	def __init__(self,life,x,y,*designs):
+		self.slow = 2
+		self.fires=[]
+		self.fireTime=time.time()
+		self.health = "  ####################################"
+		super(Boss,self).__init__(life,x,y,*designs)
+
+	def move(self,structure):
+		if time.time()-self.spawnTime > self.slow:
+			self.y = random.randrange(12)
+			self.spawnTime = time.time()
+
+	def gravity(self,structure):
+		pass
+
+	def attack(self):
+		if time.time()-self.fireTime > self.slow*2:
+			for i in range(4,7):
+				fire = Fire(1,self.x - abs(i%5 - 2),self.y+i,"./designs/fire.txt")
+				fire.cannotCross=['T','|','/','\\','`']
+				self.fires.append(fire)
+			self.fireTime = time.time()
+
+class Mario(Character):
+	def __init__(self,life,x,y,*designs):
+		self.kills=0
+		self.coins=0
+		self.missiles=[]
+		super(Mario,self).__init__(life,x,y,*designs)
+
+	def kill(self,enemy,structure):
+		if (round(self.y)+self.height-1 == round(enemy.y)) and self.x+self.width > enemy.x and enemy.x+enemy.width > self.x:
+			enemy.life-=1
+		elif self.y+self.height > enemy.y and enemy.y+enemy.height > self.y and self.x+self.width > enemy.x and enemy.x+enemy.width > self.x :
+			self.life-=1
+			self.spawn(structure)
+
+	def attack(self):
+		missile= Missile(1,self.x+5,self.y+2	,"./designs/missile.txt")
+		missile.cannotCross=['T','|','/','\\','`']
+		self.missiles.append(missile)
+
+	def spawn(self,structure):
+		self.x=structure.pos+2
+		self.y=0
+		self.velocity=0
+
+	def tangible(self,structure):
+		cy=round(self.y)
+		for line in structure.design[ round(self.y) : round(self.y+self.height) ] :
+
+			cx=self.x
+			for character in line[self.x:self.x+self.width]:
+				if character is '0' or character is '?':
+					self.coins+=1
+					space = Element(cx,cy,"./designs/empty.txt")
+					structure.place(space)
+				cx+=1
+
+			if '-' in line[self.x:self.x+self.width]:
+				self.velocity=26
+				return True
+
+			for character in self.cannotCross:
+				if character in line[self.x:self.x+self.width]:
+					return False
+			cy+=1
+		return True	
 
 class Level(Element):
 
@@ -190,5 +250,6 @@ class Level(Element):
 				arrP.append(l)
 				cy+=1
 			temp = arrP
+		os.system("clear")
 		for line in temp:
 			print(line[self.pos: self.pos+80])

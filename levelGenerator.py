@@ -70,6 +70,8 @@ class LevelGenerator:
 				os.system("clear")
 
 				level.printOnTop(obj,*enemies)
+				print(level.pos)
+
 				move = getch()
 
 				if move is 'a':
@@ -77,11 +79,12 @@ class LevelGenerator:
 						obj.moveLeft(level)
 	
 				elif move is 'd':
-					if obj.x < level.pos+(40)-obj.width:
-						obj.moveRight(level)
-					else:
-						if obj.moveRight(level):
-							level.pos+=1
+					if obj.x < 250:
+						if obj.x < level.pos+(40)-obj.width:
+							obj.moveRight(level)
+						else:
+							if obj.moveRight(level):
+								level.pos+=1
 	
 				elif move is 'w':
 					if obj.y>0:
@@ -93,11 +96,11 @@ class LevelGenerator:
 
 				elif move is 'e':
 					break
-					
+
 				elif move is 'x':
 					if choice is 'g':
 						enemies.append(obj)
-						enemystr = "Character(1,"+str(obj.x)+","+str(obj.y)+",\"./designs/goomba1.txt\",\"./designs/goomba2.txt\")"
+						enemystr = "Goomba(1,"+str(obj.x)+","+str(obj.y)+",\"./designs/goomba1.txt\",\"./designs/goomba2.txt\")"
 						enemiesstr.append(enemystr)
 					else:
 						level.place(obj)
