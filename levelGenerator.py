@@ -1,6 +1,6 @@
 import os,time
-from action import *
 from characters import *
+from level import *
 from getch import *
 
 class LevelGenerator:
@@ -14,6 +14,10 @@ class LevelGenerator:
 		if ch is '1':
 			while True: 
 				try:
+					print()
+					print("All levels :")
+					os.system("ls ./levels/ | grep -oP '^((?!Enemy).)*$' | sed -e 's/\.txt$//'")
+					print()
 					print("Enter Level Name : ",end='')
 					filename = input()
 					level = Level(0,0,"./levels/"+filename+".txt")
@@ -29,6 +33,7 @@ class LevelGenerator:
 		try:
 			file = open("./levels/"+filename+"Enemy.txt","r")
 			for line in file:
+				enemiesstr.append(line)
 				goomba = eval(line)
 				goomba.cannotCross=['T','|','/','\\','`']
 				enemies.append(goomba)
@@ -61,7 +66,7 @@ class LevelGenerator:
 				obj.cannotCross=['T','/','\\','`','-']
 			elif choice is 'h':
 				obj = Character(0,level.pos,2,"./designs/life.txt")
-				obj.cannotCross=['T','|','/','\\','`','-']
+				obj.cannotCross=['T','/','\\','`','-']
 			elif choice is 'g':
 				obj = Character(0,level.pos,2,"./designs/gun.txt")
 				obj.cannotCross=['T','|','/','\\','`','-']

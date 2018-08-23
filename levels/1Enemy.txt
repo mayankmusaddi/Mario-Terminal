@@ -1,10 +1,6 @@
-Goomba(1,60,6,"./designs/goomba1.txt","./designs/goomba2.txt")
-Goomba(1,86,18,"./designs/goomba1.txt","./designs/goomba2.txt")
-Goomba(1,80,18,"./designs/goomba1.txt","./designs/goomba2.txt")
-Goomba(1,150,0,"./designs/goomba1.txt","./designs/goomba2.txt")
-Goomba(1,140,18,"./designs/goomba1.txt","./designs/goomba2.txt")
-Goomba(1,168,18,"./designs/goomba1.txt","./designs/goomba2.txt")
-Goomba(1,286,2,"./designs/goomba1.txt","./designs/goomba2.txt")
-Goomba(1,280,2,"./designs/goomba1.txt","./designs/goomba2.txt")
-Goomba(1,274,2,"./designs/goomba1.txt","./designs/goomba2.txt")
-Goomba(1,268,2,"./designs/goomba1.txt","./designs/goomba2.txt")
+Goomba(1,60,7,"./designs/goomba1.txt","./designs/goomba2.txt")
+
+Goomba(1,96,4,"./designs/goomba1.txt","./designs/goomba2.txt")
+
+Goomba(1,250,10,"./designs/goomba1.txt","./designs/goomba2.txt")
+Goomba(1,249,14,"./designs/goomba1.txt","./designs/goomba2.txt")

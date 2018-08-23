@@ -1,2 +1,2 @@
-Goomba(1,40,8,"./designs/goomba1.txt","./designs/goomba2.txt")
-Goomba(1,138,6,"./designs/goomba1.txt","./designs/goomba2.txt")
+Goomba(1,46,6,"./designs/goomba1.txt","./designs/goomba2.txt")
+

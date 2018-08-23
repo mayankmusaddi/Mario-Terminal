@@ -1,5 +1,10 @@
 import os,time
 from characters import *
+from player import *
+from enemies import *
+from weapons import *
+from level import *
+from element import *
 from getch import *
 
 class GamePlay:
