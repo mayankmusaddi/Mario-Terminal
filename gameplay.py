@@ -6,6 +6,9 @@ class GamePlay:
 
 	def main():
 		while True:
+			print("All levels :")
+			os.system("ls ./levels/ | grep -oP '^((?!Enemy).)*$' | sed -e 's/\.txt$//'")
+			print()
 			print("Enter level : ",end='')
 			levelname = input()
 			try:

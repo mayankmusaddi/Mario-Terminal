@@ -166,6 +166,7 @@ class Mario(Character):
 	def __init__(self,life,x,y,*designs):
 		self.kills=0
 		self.coins=0
+		self.gun = False
 		self.missiles=[]
 		super(Mario,self).__init__(life,x,y,*designs)
 
@@ -177,9 +178,10 @@ class Mario(Character):
 			self.spawn(structure)
 
 	def attack(self):
-		missile= Missile(1,self.x+5,self.y+2	,"./designs/missile.txt")
-		missile.cannotCross=['T','|','/','\\','`']
-		self.missiles.append(missile)
+		if self.gun is True:
+			missile= Missile(1,self.x+5,self.y+2	,"./designs/missile.txt")
+			missile.cannotCross=['T','|','/','\\','`']
+			self.missiles.append(missile)
 
 	def spawn(self,structure):
 		self.x=structure.pos+2
@@ -192,9 +194,15 @@ class Mario(Character):
 
 			cx=self.x
 			for character in line[self.x:self.x+self.width]:
+				space = Element(cx,cy,"./designs/empty.txt")
 				if character is '0' or character is '?':
 					self.coins+=1
-					space = Element(cx,cy,"./designs/empty.txt")
+					structure.place(space)
+				if character is 'H':
+					self.life+=1
+					structure.place(space)
+				if character is '>':
+					self.gun = True
 					structure.place(space)
 				cx+=1
 

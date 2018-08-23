@@ -33,9 +33,8 @@ class _GetchUnix:
         finally:
             termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
         return ch
-
-        
-_getch = _GetchUnix()
+     
+getchS = _GetchUnix()
 
 class AlarmException(Exception):
     pass
@@ -48,7 +47,7 @@ def getch(timeout=0.05):
     signal.signal(signal.SIGALRM, alarmHandler)
     signal.setitimer(signal.ITIMER_REAL,timeout,timeout)
     try:
-        text = _getch()
+        text = getchS()
         signal.alarm(0)
         return text
     except AlarmException:
